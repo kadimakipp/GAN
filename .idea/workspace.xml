@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6eb0ac58-5636-4a0a-ab80-6dd3d4d469a3" name="Default Changelist" comment="" />
+    <list default="true" id="6eb0ac58-5636-4a0a-ab80-6dd3d4d469a3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/alchemy/context_encoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="388">
-              <caret line="129" column="20" selection-start-line="129" selection-start-column="20" selection-end-line="129" selection-end-column="20" />
+            <state relative-caret-position="310">
+              <caret line="77" selection-start-line="77" selection-end-line="77" />
               <folding>
                 <element signature="e#247#285#0" expanded="true" />
               </folding>
@@ -107,6 +111,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -124,6 +131,9 @@
     <option name="height" value="1056" />
   </component>
   <component name="ProjectId" id="1QMuURdTxxLemVyzin19oRd20PI" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -322,23 +332,22 @@
       <workItem from="1568021580871" duration="27872000" />
       <workItem from="1568725982910" duration="357000" />
       <workItem from="1568728501159" duration="7895000" />
-      <workItem from="1568736429647" duration="556000" />
+      <workItem from="1568736429647" duration="1203000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8808000" />
+    <option name="totallyTimeSpent" value="9455000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1652847" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4991708" visible="true" weight="0.20449679" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4991708" visible="true" weight="0.20493563" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -352,7 +361,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.3360973" />
+      <window_info active="true" anchor="right" id="SciView" order="3" visible="true" weight="0.4543947" />
       <window_info anchor="right" id="Database" order="4" />
     </layout>
   </component>
@@ -426,8 +435,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/alchemy/context_encoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="388">
-          <caret line="129" column="20" selection-start-line="129" selection-start-column="20" selection-end-line="129" selection-end-column="20" />
+        <state relative-caret-position="310">
+          <caret line="77" selection-start-line="77" selection-end-line="77" />
           <folding>
             <element signature="e#247#285#0" expanded="true" />
           </folding>
