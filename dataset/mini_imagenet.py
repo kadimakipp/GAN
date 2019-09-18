@@ -82,13 +82,14 @@ class CelebA(object):
         ]
         return transform
 
-    def get_loader(self, batch_size, img_size=128, mask_size=64,mode="train"):
+
+    def get_loader(self, batch_size, img_size=128, mask_size=64,mode="train",num_workers=4):
         transform = self.transform_(img_size)
         return torch.utils.data.DataLoader(
             ImageDataset(self.root, transform,img_size,mask_size,mode),
             batch_size=batch_size,
             shuffle=self.shuffle,
-            num_workers=4
+            num_workers=num_workers
         )
 
 def main():

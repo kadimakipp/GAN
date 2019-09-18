@@ -22,6 +22,7 @@ import torchvision.transforms as transforms
 class Mnist(object):
     def __init__(self):
         self.root = "/media/kipp/work/pytorch_data"
+        #self.root = "/media/kipp/work/Datas/MNIST"
         self.num_workers = 4
         self.shuffle=True
 
@@ -50,7 +51,9 @@ def main():
     mnist = Mnist()
     it = mnist.get_loader(True, 1, 28)
     for i , (images, _) in enumerate(it):
-        print(i, images.size)
+        print(i, images.shape)
+        if i>10:
+            break
 
 
 
