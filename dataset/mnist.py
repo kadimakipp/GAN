@@ -21,7 +21,7 @@ import torchvision.transforms as transforms
 
 class Mnist(object):
     def __init__(self):
-        self.root = "/media/kipp/work/Datas/MNIST"
+        self.root = "/media/kipp/work/Datas"
         self.num_workers = 4
         self.shuffle=True
 
