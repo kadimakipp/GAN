@@ -70,7 +70,7 @@ class ImageDataset(Dataset):
 
 class CelebA(object):
     def __init__(self):
-        self.root = "/media/kipp/work/pytorch_data/celeba-dataset/img_align_celeba"
+        self.root = "/media/kipp/work/Datas/celeba-dataset/img_align_celeba"
         self.work_num = 4
         self.shuffle = True
 

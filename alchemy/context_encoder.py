@@ -130,7 +130,7 @@ class ContextEncoder(object):
                     self.sample_images()
 
 
-def main(epochs=1, batch_size=8,img_size=128, mask_size=64, lr=0.0002, b1=0.5, b2=0.999):
+def main(epochs=20, batch_size=16,img_size=128, mask_size=64, lr=0.0002, b1=0.5, b2=0.999):
     context_encoder = ContextEncoder(batch_size, img_size, mask_size, lr, b1, b2)
     context_encoder.Train(epochs)
 
