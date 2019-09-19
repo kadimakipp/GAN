@@ -34,3 +34,11 @@ class AuxFunction(object):
     @staticmethod
     def device():
         return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    @staticmethod
+    def to_categorical(y, num_columns):
+        """Return one-hot encoded device variable"""
+        y_cat = torch.zeros((y.shape[0]), num_columns)
+        y_cat[range(y.shape[0]), y] = 1.0
+
+        return y_cat.to(device=AuxFunction.device())
