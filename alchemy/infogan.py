@@ -24,7 +24,10 @@ from tool.auxiliary import AuxFunction as AuxF
 from torchvision.utils import save_image
 
 import itertools
-
+import os
+os.makedirs("../images/static/", exist_ok=True)
+os.makedirs("../images/varying_c1/", exist_ok=True)
+os.makedirs("../images/varying_c2/", exist_ok=True)
 
 class InfoGAN_Net(object):
     def __init__(self, batch_size, latent_dim, code_dim, n_classes, img_size, channels,lr,b1,b2):
