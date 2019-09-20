@@ -25,9 +25,9 @@ from torchvision.utils import save_image
 
 import itertools
 import os
-os.makedirs("../images/static/", exist_ok=True)
-os.makedirs("../images/varying_c1/", exist_ok=True)
-os.makedirs("../images/varying_c2/", exist_ok=True)
+os.makedirs("../images/infogan/static/", exist_ok=True)
+os.makedirs("../images/infogan/varying_c1/", exist_ok=True)
+os.makedirs("../images/infogan/varying_c2/", exist_ok=True)
 
 class InfoGAN_Net(object):
     def __init__(self, batch_size, latent_dim, code_dim, n_classes, img_size, channels,lr,b1,b2):
@@ -72,17 +72,15 @@ class InfoGAN_Net(object):
 
     def sample_img(self,n_row, index):
         # Static sample
-        z = np.random.normal(0,1, (n_row**2, self.latent_dim))
-        z = torch.from_numpy(z).type(torch.FloatTensor).to(self.device)
+        z_size  = (n_row**2, self.latent_dim)
+        z = torch.normal(torch.zeros(z_size), torch.ones(z_size)).to(self.device)
         static_sample = self.generator(z, self.__static_label, self.__static_code)
         save_image(static_sample.data, "../images/infogan/static/%d.png"%index, nrow=n_row, normalize=True)
         # Get varied c1 and c2
-        zeros = np.zeros((n_row**2, 1))
-        c_varied = np.repeat(np.linspace(-1,1, n_row)[:, np.newaxis],n_row, 0)
-        c1 = torch.from_numpy(np.concatenate((c_varied,zeros),-1)).type(torch.FloatTensor)
-        c1 = c1.to(self.device)
-        c2 = torch.from_numpy(np.concatenate((zeros,c_varied), -1)).type(torch.FloatTensor)
-        c2 = c2.to(self.device)
+        zeros = torch.zeros((n_row**2, 1))
+        c_varied = torch.repeat_interleave(torch.linspace(-1,1,n_row).unsqueeze_(1), n_row, 0)
+        c1 = torch.cat((c_varied, zeros), -1).to(self.device)
+        c2 = torch.cat((zeros, c_varied), -1).to(self.device)
         sample1 = self.generator(self.__static_z, self.__static_label, c1)
         sample2 = self.generator(self.__static_z, self.__static_label, c2)
         save_image(sample1.data, "../images/infogan/varying_c1/%d.png" % index, nrow=n_row, normalize=True)
@@ -103,13 +101,11 @@ class InfoGAN_Net(object):
                 #  Train Generator
                 # -----------------
                 self.optimizer_G.zero_grad()
-                z = np.random.normal(0, 1, (batch_size, self.latent_dim))
-                z = torch.from_numpy(z).type(torch.FloatTensor).to(self.device)
-                label_c = np.random.randint(0, self.n_classes,batch_size)
+                z = torch.normal(torch.zeros((batch_size, self.latent_dim)), torch.ones((batch_size, self.latent_dim)))
+                z= z.to(self.device)
+                label_c = torch.randint(0, self.n_classes, (batch_size,))
                 label_input = AuxF.to_categorical(label_c, num_columns=self.n_classes)
-                np_code_input = np.random.uniform(-1,1,(batch_size, self.code_dim))
-                code_input = torch.from_numpy(np_code_input).type(torch.FloatTensor).to(self.device)
-
+                code_input = torch.Tensor(batch_size, self.code_dim).uniform_(-1,1).to(self.device)
                 #Generate a batch of images
                 gen_imgs = self.generator(z, label_input, code_input)
                 validity,_,_ = self.discriminator(gen_imgs)
@@ -143,14 +139,12 @@ class InfoGAN_Net(object):
                 #sampled_labels = np.random.randint(0, self.n_classes, batch_size)
                 gt_labels = torch.randint(0, self.n_classes, (batch_size,),dtype=torch.long,requires_grad=False,device=self.device)
 
-                np_z = np.random.normal(0,1,(batch_size, self.latent_dim))
-                z = torch.from_numpy(np_z).type(torch.FloatTensor).to(self.device)
+                z = torch.normal(torch.zeros((batch_size, self.latent_dim)), torch.ones((batch_size, self.latent_dim)))
+                z = z.to(self.device)
 
                 label_input = AuxF.to_categorical(gt_labels, self.n_classes)
 
-                code_np =  np.random.uniform(-1,1,(batch_size,self.code_dim))
-                code_input = torch.from_numpy(code_np).type(torch.FloatTensor).to(self.device)
-
+                code_input = torch.Tensor(batch_size, self.code_dim).uniform_(-1,1).to(self.device)
                 gen_imgs = self.generator(z, label_input, code_input)
                 _, pred_label, pred_code = self.discriminator(gen_imgs)
 
