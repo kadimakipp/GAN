@@ -32,13 +32,13 @@ class MnistData(Dataset):
     training_file = "mnist_m_train.pt"
     test_file = "mnist_m_test.pt"
 
-    def __init__(self, root, mnist_root, train=True,
+    def __init__(self, mnist_root, mnistm_root, train=True,
                  transform=None, target_transform=None,
                  download=False):
         """Init MNIST-M dataset"""
         super(MnistData, self).__init__()
-        self.root = os.path.expanduser(root)
-        self.mnist_root = os.path.expanduser(mnist_root)
+        self.mnist_m_root = mnistm_root
+        self.mnist_root = mnist_root
         self.transform = transform
         self.target_transform = target_transform
         self.train = train  # training set or test set
@@ -51,11 +51,11 @@ class MnistData(Dataset):
 
         if self.train:
             self.train_data, self.train_labels = torch.load(
-                os.path.join(self.root, self.processed_folder, self.training_file)
+                os.path.join(self.mnist_m_root, self.processed_folder, self.training_file)
             )
         else:
             self.test_data, self.test_labels = torch.load(
-                os.path.join(self.root, self.processed_folder, self.test_file)
+                os.path.join(self.mnist_m_root, self.processed_folder, self.test_file)
             )
 
     def __getitem__(self, index):
@@ -92,8 +92,8 @@ class MnistData(Dataset):
             return len(self.test_data)
 
     def _check_exists(self):
-        return os.path.exists(os.path.join(self.root, self.processed_folder, self.training_file)) and os.path.exists(
-            os.path.join(self.root, self.processed_folder, self.test_file)
+        return os.path.exists(os.path.join(self.mnist_m_root, self.processed_folder, self.training_file)) and os.path.exists(
+            os.path.join(self.mnist_m_root, self.processed_folder, self.test_file)
         )
 
     def download(self):
@@ -110,8 +110,8 @@ class MnistData(Dataset):
 
         # make data dirs
         try:
-            os.makedirs(os.path.join(self.root, self.raw_folder))
-            os.makedirs(os.path.join(self.root, self.processed_folder))
+            os.makedirs(os.path.join(self.mnist_m_root, self.raw_folder))
+            os.makedirs(os.path.join(self.mnist_m_root, self.processed_folder))
         except OSError as e:
             if e.errno == errno.EEXIST:
                 pass
@@ -121,7 +121,7 @@ class MnistData(Dataset):
         # download pkl files
         print("Downloading " + self.url)
         filename = self.url.rpartition("/")[2]
-        file_path = os.path.join(self.root, self.raw_folder, filename)
+        file_path = os.path.join(self.mnist_m_root, self.raw_folder, filename)
         if not os.path.exists(file_path.replace(".gz", "")):
             data = urllib.request.urlopen(self.url)
             with open(file_path, "wb") as f:
@@ -140,23 +140,23 @@ class MnistData(Dataset):
         mnist_m_test_data = torch.ByteTensor(mnist_m_data[b"test"])
 
         # get MNIST labels
-        mnist_train_labels = datasets.MNIST(root=self.mnist_root, train=True, download=True).train_labels
-        mnist_test_labels = datasets.MNIST(root=self.mnist_root, train=False, download=True).test_labels
+        mnist_train_labels = datasets.MNIST(root=self.mnist_root, train=True, download=True).targets
+        mnist_test_labels = datasets.MNIST(root=self.mnist_root, train=False, download=True).targets
 
         # save MNIST-M dataset
         training_set = (mnist_m_train_data, mnist_train_labels)
         test_set = (mnist_m_test_data, mnist_test_labels)
-        with open(os.path.join(self.root, self.processed_folder, self.training_file), "wb") as f:
+        with open(os.path.join(self.mnist_m_root, self.processed_folder, self.training_file), "wb") as f:
             torch.save(training_set, f)
-        with open(os.path.join(self.root, self.processed_folder, self.test_file), "wb") as f:
+        with open(os.path.join(self.mnist_m_root, self.processed_folder, self.test_file), "wb") as f:
             torch.save(test_set, f)
 
         print("Done!")
 
-class MNISTM(object):
+class MnistM(object):
     def __init__(self):
         root = "/media/kipp/work/Datas"
-        self.root_mnist = os.path.join(root, "MNIST")
+        self.root_mnist = root
         self.root_mnistm = os.path.join(root, "MNIST-M")
         self.work_num = 4
         self.shuffle = True
@@ -173,15 +173,22 @@ class MNISTM(object):
     def get_loader(self, batch_size, img_size, shuffle=True, train=True, download=True,):
         transform = self.transform_(img_size)
         return torch.utils.data.DataLoader(
-            MnistData(self.root_mnist, self.root_mnistm, train, transform,
-                      download=download)
+            MnistData(self.root_mnist, self.root_mnistm, train,
+                      transform = transform,
+                      download=download),
+            batch_size=batch_size,
+            shuffle=shuffle,
         )
 
 def main():
-    pass
+    mnistm = MnistM()
+    loader = mnistm.get_loader(1, 32)
+    for i , (imgs2,_) in enumerate(loader):
+        if i>10:
+            break
+        print(i, imgs2.shape)
 
 
 if __name__ == "__main__":
     import fire
-
     fire.Fire(main)

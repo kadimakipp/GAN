@@ -18,6 +18,8 @@ import numpy as np
 import torch
 import torchvision
 from tool.auxiliary import AuxFunction as AuxF
+from dataset.mnistm import MnistM
+from dataset.mnist import Mnist
 #from abc import ABCMeta, abstractmethod #meta class
 class SAMHI(object):
     def __init__(self, batch_size,latent_dim,img_size, channels, lr, b1, b2):
@@ -29,10 +31,25 @@ class SAMHI(object):
         self._b1 = b1
         self._b2 = b2
 
-        self.device =  AuxF.device()
+        self._device =  AuxF.device()
 
 
     def optimizer(self, generator, discriminator):
         self._optimizer_G = torch.optim.Adam(generator.parameters(), lr=self._lr, betas=(self._b1, self._b2))
         self._optimizer_D = torch.optim.Adam(discriminator.parameters(),lr=self._lr, betas=(self._b1, self._b2))
 
+
+    def weights_init(self, net):
+        net.apply(AuxF.weights_init_normal)
+
+    def get_mnist_loader(self,train):
+        mnist = Mnist()
+        mnist_loader = mnist.get_loader(train, self._batch_size, self._img_size)
+        return mnist_loader
+
+    def get_mnistm_loader(self, train):
+        mnistm = MnistM()
+        mnistm_loader = mnistm.get_loader(batch_size=self._batch_size,
+                                          img_size=self._img_size,
+                                          train=train)
+        return mnistm_loader
