@@ -83,7 +83,7 @@ class COGAN_Net(SAMHI):
                 self._optimizer_D.zero_grad()
 
                 validity1_real, validity2_real = self.coupled_discriminators(imgs1,imgs2)
-                validity1_fake, validity2_fake = self.coupled_discriminators(gen_imgs1, gen_imgs2)
+                validity1_fake, validity2_fake = self.coupled_discriminators(gen_imgs1.detach(), gen_imgs2.detach())
 
                 d_loss = (
                     self.adversarial_loss(validity1_real, valid)
@@ -99,17 +99,12 @@ class COGAN_Net(SAMHI):
                 )
                 if (i + 1) % (len(self.mnist) // 2) == 0:
                     gen_imgs = torch.cat((gen_imgs1.data,gen_imgs2.data),0)
-                    gen_imgs = gen_imgs.to("cpu").numpy()
-                    print(gen_imgs.shape)
-                    # for k, dis_img in enumerate(gen_imgs):
-                    #     plt.subplot(4, 8, k + 1)
-                    #     plt.imshow(gen_imgs[k])
-                    # plt.pause(1)
-
-
-
-
-
+                    show_imgs = (gen_imgs+1)/2
+                    show_imgs = show_imgs.to("cpu").numpy()
+                    for k, dis_img in enumerate(show_imgs):
+                        plt.subplot(8, 8, k + 1)
+                        plt.imshow(dis_img.transpose(1,2,0))
+                    plt.pause(1)
 
 
 def main(epochs=200, batch_size=32, latent_dim=100, img_size=32, channels=3, lr=0.0002, b1=0.5,b2=0.999):

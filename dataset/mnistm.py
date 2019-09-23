@@ -22,6 +22,7 @@ import os
 from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
 
 class MnistData(Dataset):
     """MNIST-M Dataset."""
@@ -181,12 +182,20 @@ class MnistM(object):
         )
 
 def main():
+    plt.figure()
     mnistm = MnistM()
     loader = mnistm.get_loader(1, 32)
     for i , (imgs2,_) in enumerate(loader):
-        if i>10:
+        if i>9:
             break
-        print(i, imgs2.shape)
+        #print(i, imgs2.shape)
+        imgs2 = (imgs2+1)/2
+        imgs2 = imgs2.squeeze().numpy()
+        print(imgs2.shape)
+        #plt.imshow(imgs2.transpose(1,2,0))
+        plt.subplot(2, 5, i + 1)
+        plt.imshow(imgs2.transpose(1,2,0))
+    plt.show()
 
 
 if __name__ == "__main__":
