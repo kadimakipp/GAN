@@ -17,7 +17,7 @@ from __future__ import print_function
 import numpy as np
 import torch
 import torchvision
-from dataset.mini_imagenet import CelebA
+from dataset.celeba import CelebA
 from net.context_encoder import *
 import matplotlib.pyplot as plt
 plt.rcParams['figure.figsize'] = (18.0, 12.0)

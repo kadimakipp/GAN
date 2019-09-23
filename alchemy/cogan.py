@@ -114,5 +114,4 @@ def main(epochs=200, batch_size=32, latent_dim=100, img_size=32, channels=3, lr=
 
 if __name__ == "__main__":
     import fire
-
     fire.Fire(main)
