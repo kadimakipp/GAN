@@ -33,12 +33,12 @@ import pandas as pd
 class TinyImagenet(Dataset):
     def __init__(self,root, transform, train="train"):
         super(TinyImagenet,self).__init__()
-        self.transform = transform
-
+        self.transform = Transforms.Compose(transform)
+        self.train = train
         if train not in ["train","val", "test"]:
             RuntimeError("train must be in ('train, val, test'),but train = %s"%(train))
         self.root = os.path.join(root, train)
-        columns = ["filename", "wnid", "b1", "b2", "b3", "b4"]
+        columns = ["filename", "wnid", "bbox"]
         self.data = pd.DataFrame(columns=columns)
         if train == "train":
             self.wnids = open(os.path.join(root, "wnids.txt"), "r").readlines()
@@ -51,24 +51,47 @@ class TinyImagenet(Dataset):
                 for box in boxes:
                     box = box.replace('\n', '')
                     filename, b1,b2,b3,b4 = box.split('\t')
-                    d = pd.DataFrame([[filename, wnid,
-                                       float(b1), float(b2),
-                                       float(b3), float(b4)]],columns=columns)
+                    bbox = np.array([b1,b2,b3,b4],dtype=float)
+                    d = pd.DataFrame([[filename, wnid,bbox]],
+                                     columns=columns)
                     self.data = self.data.append(d, ignore_index=True)
-                if i>2:
-                    break
+        elif train == "val":
+            self.wnids = open(os.path.join(root, "wnids.txt"), "r").readlines()
+            self.wnids = map(lambda s: s.replace('\n', ''), self.wnids)
+            self.classes_dict = {}
+            for i, wnid in enumerate(self.wnids):
+                self.classes_dict.update({wnid: i})
+
+            self.wnids = open(os.path.join(self.root, "val_annotations.txt"), "r").readlines()
+            self.wnids = map(lambda s: s.replace('\n', ''), self.wnids)
+            for i, w in enumerate(self.wnids):
+                filename, wnid, b1, b2, b3, b4 = w.split('\t')
+                bbox = np.array([b1, b2, b3, b4], dtype=float)
+                d = pd.DataFrame([[filename, wnid, bbox]],
+                                 columns=columns)
+                self.data = self.data.append(d, ignore_index=True)
+
+        elif train == "test":
+            #todo: test read
+            print("coming soon...")
+
         self.data = self.data.to_numpy()
 
     def __len__(self):
         return self.data.shape[0]
 
     def __getitem__(self, item):
-        filename, wnid, b1,b2,b3,b4 = self.data[item]
-        filename = os.path.join("images", filename)
-        img_name = os.path.join(wnid, filename)
-        image = Image.open(os.path.join(self.root,img_name))
+        filename, wnid, bbox = self.data[item]
         label = self.classes_dict[wnid]
-        bbox = [b1,b2,b3,b4]
+        img_name = os.path.join("images", filename)
+        if self.train == 'train':
+            img_name = os.path.join(wnid, img_name)
+        img_name = os.path.join(self.root,img_name)
+        image = Image.open(img_name)
+        if image.mode is not "RGB":
+            image = image.convert('RGB')
+
+        image = self.transform(image)
         return image, label, bbox
 
 class tinyImagenet(object):
@@ -82,13 +105,13 @@ class tinyImagenet(object):
             # Transforms.RandomCrop(224),
             # Transforms.RandomHorizontalFlip(0.5),
             # Transforms.RandomAffine(5),
-            Transforms.Resize((img_size, img_size), Image.BICUBIC),
+            Transforms.Resize((img_size, img_size)),
             Transforms.ToTensor(),
             Transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         ]
         return transform
 
-    def get_loader(self, batch_size, img_size, mode="train"):
+    def get_loader(self, batch_size, img_size, mode="val"):
         transform = self.Transform(img_size)
         return torch.utils.data.DataLoader(
             TinyImagenet(self.root,transform, train=mode),
@@ -96,18 +119,26 @@ class tinyImagenet(object):
             shuffle=self.shuffle,
             num_workers = self.num_work
         )
-
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 def main():
+    plt.figure()
     tiny = tinyImagenet()
-    loader = tiny.get_loader(1,64)
+    loader = tiny.get_loader(8,64)
     for i, (image, label, box) in enumerate(loader):
-        if i>2:
+        if i>20:
             break
         print(image.shape, label, box)
-
-
-
-
+        dis_img = image.numpy()[0]
+        box = box.numpy()[0]
+        dis_img = (dis_img+1)/2
+        dis_img = dis_img.transpose(1,2,0)
+        plt.imshow(dis_img)
+        currentAxis = plt.gca()
+        rect = patches.Rectangle((box[0], box[1]), box[2]-box[0], box[3]-box[1],
+                                 linewidth=1, edgecolor='r', facecolor='none')
+        currentAxis.add_patch(rect)
+        plt.show()
 
 if __name__ == "__main__":
     import fire
